@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import kotlin.reflect.KClass
 
 interface FileNode : PropertyOwnerNode<FirFile> {
     val name get() = property("name") { it.name }
@@ -28,19 +29,7 @@ class FileValidateNode(context: KatExecutionContext<FirFile>) :
         factory: (KatExecutionContext<FirClass>) -> ClassFilterNode,
         configuration: ClassFilterNode.() -> Unit
     ) {
-        context.element.acceptChildren(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                if (element is FirClass) {
-                    val newContext = (context as KatExecutionContext<FirDeclaration>)
-                        .copy(element = element)
-                    val result = factory(newContext as KatExecutionContext<FirClass>)
-                        .apply(configuration)
-                        .executeFilter()
-
-                    newContext.reporterService.reportIfRequired(result)
-                }
-            }
-        })
+        collectNode(FirClass::class, factory, configuration)
     }
 }
 

@@ -4,10 +4,12 @@ import io.github.lexadiky.kat.sdk.dsl.ClassNodeCollector
 import io.github.lexadiky.kat.sdk.dsl.FileNodeCollector
 import io.github.lexadiky.kat.sdk.dsl.context.KatExecutionContext
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 
 interface ClassNode : PropertyOwnerNode<FirClass> {
     val name get() = property("name") { it.nameOrSpecialName.asString() }
+    val qualifier get() = property("qualifier") { it.classId.asFqNameString() }
 }
 
 open class ClassFilterNode(context: KatExecutionContext<FirClass>) :

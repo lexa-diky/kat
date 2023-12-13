@@ -8,6 +8,8 @@ import io.github.lexadiky.kat.sdk.dsl.context.KatExecutionContext
 import io.github.lexadiky.kat.sdk.dsl.property.NodeProperty
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import kotlin.reflect.KClass
 
 abstract class AbstractValidateNode<E : FirDeclaration>(
     override val context: KatExecutionContext<E>
@@ -30,6 +32,28 @@ abstract class AbstractValidateNode<E : FirDeclaration>(
 
     fun execute(): Map<NodeAssertion<*>, AssertionResult> {
         return assertions.associateWith { it.execute() }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    protected fun <T: FirDeclaration, N: AbstractFilterNode<T, *>> collectNode(
+        type: KClass<T>,
+        factory: (KatExecutionContext<T>) -> N,
+        configuration: N.() -> Unit
+    ) {
+        context.element.acceptChildren(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                if (type.isInstance(element) && element is FirDeclaration) {
+                    val newContext = (context as KatExecutionContext<T>)
+                        .copy(element = element as T)
+
+                    val result = factory(newContext)
+                        .apply(configuration)
+                        .executeFilter()
+
+                    newContext.reporterService.reportIfRequired(result)
+                }
+            }
+        })
     }
 }
 
