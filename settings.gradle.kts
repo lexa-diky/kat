@@ -1,11 +1,13 @@
 pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        google()
+    }
     plugins {
         id("org.jetbrains.kotlin.jvm") version "1.9.21"
         id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    }
-    repositories {
-        mavenCentral()
-        google()
+        id("org.gradle.kotlin.kotlin-dsl") version "4.1.2"
     }
 }
 

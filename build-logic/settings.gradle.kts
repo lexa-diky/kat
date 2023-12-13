@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-architecture-testing"
+rootProject.name = "build-logic"
