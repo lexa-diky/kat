@@ -6,11 +6,12 @@ import io.github.lexadiky.kat.sdk.dsl.context.KatExecutionContext
 import io.github.lexadiky.kat.sdk.dsl.property.NodeProperty
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPackageDirective
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 typealias PackageDirectiveProperty<T> = NodeProperty<T, FirPackageDirective>
 
 context(NodeAssertionCollector, KatExecutionContext.Owner<T>)
-infix fun <T : FirElement> PackageDirectiveProperty<T>.startsWith(prefix: String) = emit(
+infix fun <T : FirDeclaration> PackageDirectiveProperty<T>.startsWith(prefix: String) = emit(
     DefaultNodeAssertion<FirPackageDirective>(
         element = context.element,
         property = this@PackageDirectiveProperty,

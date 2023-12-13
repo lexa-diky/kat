@@ -13,6 +13,7 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 interface FileNode : PropertyOwnerNode<FirFile> {
     val name get() = property("name") { it.name }
     val packageDirective get() = property("package") { it.packageDirective }
+    val declarations get() = property("declarations") { it.declarations }
 }
 
 open class FileFilterNode(context: KatExecutionContext<FirFile>) :
