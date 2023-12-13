@@ -17,6 +17,11 @@ dependencyResolutionManagement {
         mavenCentral()
         google()
     }
+    versionCatalogs {
+        create("libs") {
+            from(files("./../libs.versions.toml"))
+        }
+    }
 }
 
 rootProject.name = "playground"
@@ -25,3 +30,6 @@ includeBuild("./../")
 
 include(":kat-sdk-substitute")
 project(":kat-sdk-substitute").projectDir = file("./../kat/sdk")
+
+include(":kat-k2-substitute")
+project(":kat-k2-substitute").projectDir = file("./../kat/k2")
