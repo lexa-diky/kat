@@ -4,3 +4,6 @@ fun main() {
     println("hello world")
 }
 
+class PikaChu {
+
+}

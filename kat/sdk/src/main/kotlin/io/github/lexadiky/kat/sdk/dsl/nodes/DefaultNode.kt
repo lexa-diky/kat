@@ -7,8 +7,9 @@ import io.github.lexadiky.kat.sdk.dsl.assertion.execute
 import io.github.lexadiky.kat.sdk.dsl.context.KatExecutionContext
 import io.github.lexadiky.kat.sdk.dsl.property.NodeProperty
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
-abstract class DefaultValidateNode<E : FirElement>(
+abstract class AbstractValidateNode<E : FirDeclaration>(
     override val context: KatExecutionContext<E>
 ) : PropertyOwnerNode<E>,
     NodeAssertionCollector,
@@ -32,10 +33,10 @@ abstract class DefaultValidateNode<E : FirElement>(
     }
 }
 
-abstract class DefaultFilterNode<E : FirElement, V : DefaultValidateNode<E>>(
+abstract class AbstractFilterNode<E : FirDeclaration, V : AbstractValidateNode<E>>(
     context: KatExecutionContext<E>,
     private val pariValidateFactory: (KatExecutionContext<E>) -> V
-) : DefaultValidateNode<E>(context) {
+) : AbstractValidateNode<E>(context) {
     private val validations: MutableSet<() -> Map<NodeAssertion<*>, AssertionResult>> = HashSet()
 
     fun validate(node: V.() -> Unit) {
