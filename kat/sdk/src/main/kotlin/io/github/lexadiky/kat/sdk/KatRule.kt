@@ -17,16 +17,18 @@ abstract class KatRule(
     override val supportsK2: Boolean = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(Fir(configuration))
+        val declaration = FirRuleDeclaration().apply(declare)
+        FirExtensionRegistrarAdapter.registerExtension(Fir(configuration, declaration))
     }
 
     internal class Fir(
-        private val configuration: CompilerConfiguration
+        private val configuration: CompilerConfiguration,
+        private val declaration: FirRuleDeclaration
     ) : FirExtensionRegistrar() {
 
         override fun ExtensionRegistrarContext.configurePlugin() {
             +FirAdditionalCheckersExtension.Factory { session ->
-                KatRuleAdditionalCheckersExtension(session)
+                KatRuleAdditionalCheckersExtension(session, declaration)
             }
         }
     }

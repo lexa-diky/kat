@@ -6,6 +6,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class KatConventionPlugin : Plugin<Project> {
 
@@ -22,5 +23,10 @@ class KatConventionPlugin : Plugin<Project> {
         target.extensions.configure<KotlinJvmProjectExtension>() {
             jvmToolchain(19)
         }
+
+        target.tasks.withType(KotlinCompile::class.java) {
+            kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
+        }
+
     }
 }
