@@ -16,6 +16,18 @@ infix fun <T : FirDeclaration> StringNodeProperty<T>.like(pattern: String) = emi
         property = this@StringNodeProperty,
         description = "should match '$pattern'",
         check = { extractor(context.element).matches(pattern.toRegex()) },
-        actual = { "actual '${extractor(context.element)}'" }
+        actual = { extractor(context.element) }
     )
 )
+
+context(NodeAssertionCollector, KatExecutionContext.Owner<T>)
+infix fun <T : FirDeclaration> StringNodeProperty<T>.startsWith(pattern: String) = emit(
+    DefaultNodeAssertion<String>(
+        element = context.element,
+        property = this@StringNodeProperty,
+        description = "should start with '$pattern'",
+        check = { extractor(context.element).startsWith(pattern) },
+        actual = { extractor(context.element) }
+    )
+)
+

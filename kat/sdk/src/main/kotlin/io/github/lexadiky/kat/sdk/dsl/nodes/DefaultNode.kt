@@ -1,6 +1,7 @@
 package io.github.lexadiky.kat.sdk.dsl.nodes
 
 import io.github.lexadiky.kat.sdk.dsl.assertion.AssertionResult
+import io.github.lexadiky.kat.sdk.dsl.assertion.DefaultNodeAssertion
 import io.github.lexadiky.kat.sdk.dsl.assertion.NodeAssertion
 import io.github.lexadiky.kat.sdk.dsl.assertion.NodeAssertionCollector
 import io.github.lexadiky.kat.sdk.dsl.assertion.execute
@@ -18,10 +19,18 @@ abstract class AbstractValidateNode<E : FirDeclaration>(
     KatExecutionContext.Owner<E> {
 
     protected val assertions: MutableList<NodeAssertion<*>> = ArrayList()
+
+    protected var anyAssertionBlock: Boolean = false
+    protected val anyAssertionBuffer: MutableList<NodeAssertion<*>> = ArrayList()
+
     private val propertyCache: MutableMap<String, NodeProperty<E, *>> = HashMap()
 
     override fun <T> emit(assertion: NodeAssertion<T>): NodeAssertion<T> {
-        assertions += assertion
+        if (anyAssertionBlock) {
+            anyAssertionBuffer += assertion
+        } else {
+            assertions += assertion
+        }
         return assertion
     }
 
@@ -30,30 +39,53 @@ abstract class AbstractValidateNode<E : FirDeclaration>(
         propertyCache.computeIfAbsent(name) { NodeProperty(name, extractor) }
                 as NodeProperty<E, T>
 
+    override fun <T> contextProperty(name: String, extractor: (KatExecutionContext<E>) -> T): NodeProperty<E, T> =
+        propertyCache.computeIfAbsent(name) { NodeProperty(name) { _ -> extractor(context) } }
+                as NodeProperty<E, T>
+
     fun execute(): Map<NodeAssertion<*>, AssertionResult> {
         return assertions.associateWith { it.execute() }
     }
 
+    fun any(block: () -> Unit) {
+        anyAssertionBlock = true
+        block()
+        anyAssertionBlock = false
+        emit(DefaultNodeAssertion(
+            element = context.element,
+            property = property("*") { context.element },
+            description = "any(${anyAssertionBuffer.joinToString { "${it.property.name} ${it.description}" }})",
+            check = { anyAssertionBuffer.any { it.check() } },
+            actual = { "any(${anyAssertionBuffer.joinToString { it.actual() }})" }
+        ))
+    }
+
     @Suppress("UNCHECKED_CAST")
-    protected fun <T: FirDeclaration, N: AbstractFilterNode<T, *>> collectNode(
+    protected fun <T : FirDeclaration, N : AbstractFilterNode<T, *>> collectNode(
         type: KClass<T>,
         factory: (KatExecutionContext<T>) -> N,
         configuration: N.() -> Unit
     ) {
+        val buffer = ArrayList<T>()
+
         context.element.acceptChildren(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (type.isInstance(element) && element is FirDeclaration) {
-                    val newContext = (context as KatExecutionContext<T>)
-                        .copy(element = element as T)
-
-                    val result = factory(newContext)
-                        .apply(configuration)
-                        .executeFilter()
-
-                    newContext.reporterService.reportIfRequired(result)
+                    buffer.add(element as T)
                 }
             }
         })
+
+        buffer.forEach { element ->
+            val newContext = (context as KatExecutionContext<T>)
+                .copy(element = element as T)
+
+            val result = factory(newContext)
+                .apply(configuration)
+                .executeFilter()
+
+            newContext.reporterService.reportIfRequired(result)
+        }
     }
 }
 

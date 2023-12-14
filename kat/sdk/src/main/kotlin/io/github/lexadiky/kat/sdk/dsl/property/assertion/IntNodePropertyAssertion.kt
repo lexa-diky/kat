@@ -18,7 +18,7 @@ infix fun <T : FirDeclaration> AnyNodeProperty<T, Int>.gt(value: Int): NodeAsser
             property = this@AnyNodeProperty,
             description = "should be grater than '$value'",
             check = { extractor(context.element) > value },
-            actual = { "actual '${extractor(context.element)}'" }
+            actual = { "${extractor(context.element)}" }
         )
     )
 }
@@ -31,7 +31,7 @@ infix fun <T : FirDeclaration> AnyNodeProperty<T, Int>.lt(value: Int): NodeAsser
             property = this@AnyNodeProperty,
             description = "should be less than '$value'",
             check = { extractor(context.element) < value },
-            actual = { "actual '${extractor(context.element)}'" }
+            actual = { "${extractor(context.element)}" }
         )
     )
 }

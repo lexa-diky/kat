@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 
 internal class KatRuleAdditionalCheckersExtension(
@@ -15,5 +16,7 @@ internal class KatRuleAdditionalCheckersExtension(
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val fileCheckers: Set<FirFileChecker> get() = declaration.firFileCheckers
         override val classCheckers: Set<FirClassChecker> get() = declaration.firClassCheckers
+
+        override val functionCheckers: Set<FirFunctionChecker> = declaration.firFunctionCheckers
     }
 }

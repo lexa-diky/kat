@@ -18,7 +18,7 @@ infix fun <T : FirDeclaration, V> AnyNodeProperty<T, V>.equal(value: V): NodeAss
             property = this@AnyNodeProperty,
             description = "should be equal to '$value'",
             check = { extractor(context.element) == value },
-            actual = { "actual '${extractor(context.element)}'" }
+            actual = { "${extractor(context.element)}" }
         )
     )
 }
@@ -31,7 +31,7 @@ infix fun <T : FirDeclaration, V> AnyNodeProperty<T, V>.notEqual(value: V): Node
             property = this@AnyNodeProperty,
             description = "should be not equal to '$value'",
             check = { extractor(context.element) != value },
-            actual = { "actual '${extractor(context.element)}'" }
+            actual = { "${extractor(context.element)}" }
         )
     )
 }

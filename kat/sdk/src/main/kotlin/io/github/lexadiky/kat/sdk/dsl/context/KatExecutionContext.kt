@@ -7,8 +7,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 data class KatExecutionContext<E: FirDeclaration>(
     val element: E,
-    private val context: CheckerContext,
-    private val reporter: DiagnosticReporter
+    val context: CheckerContext,
+    val reporter: DiagnosticReporter
 ) {
 
     val reporterService get() = ReporterService(element, context, reporter)

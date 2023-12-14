@@ -8,8 +8,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
 class ReporterService(
@@ -67,12 +69,14 @@ class ReporterService(
         val description = assertion.description
         val actual = assertion.actual()
 
-        return "${elementType} ${propertyName} ${description}, $actual"
+        return "${elementType} ${propertyName} ${description}, actual $actual"
     }
 
     private fun readableType(element: FirElement): String = when (element) {
         is FirFile -> "file"
         is FirRegularClass -> "class"
+        is FirConstructor -> "constructor"
+        is FirFunction -> "function"
         else -> element.toString()
     }
 }

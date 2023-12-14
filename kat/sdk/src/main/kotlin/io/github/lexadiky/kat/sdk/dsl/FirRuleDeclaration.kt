@@ -14,14 +14,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
+@KatDslMarker
 class FirRuleDeclaration : FileNodeCollector, ClassNodeCollector {
     internal var firFileCheckers: MutableSet<FirFileChecker> = HashSet()
     internal var firClassCheckers: MutableSet<FirClassChecker> = HashSet()
+    internal var firFunctionCheckers: MutableSet<FirFunctionChecker> = HashSet()
 
     override fun collectFile(
         factory: (KatExecutionContext<FirFile>) -> FileFilterNode,

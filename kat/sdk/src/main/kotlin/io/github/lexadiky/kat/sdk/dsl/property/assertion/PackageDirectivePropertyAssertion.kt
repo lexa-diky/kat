@@ -17,6 +17,6 @@ infix fun <T : FirDeclaration> PackageDirectiveProperty<T>.startsWith(prefix: St
         property = this@PackageDirectiveProperty,
         description = "should start with '$prefix'",
         check = { extractor(context.element).packageFqName.asString().startsWith(prefix) },
-        actual = { "actual '${extractor(context.element).packageFqName.asString()}'" }
+        actual = { extractor(context.element).packageFqName.asString() }
     )
 )
