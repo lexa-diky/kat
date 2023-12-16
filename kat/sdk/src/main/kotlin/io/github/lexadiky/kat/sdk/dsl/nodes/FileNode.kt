@@ -11,6 +11,7 @@ interface FileNode : PropertyOwnerNode<FirFile> {
     val name get() = property("name") { it.name }
     val packageDirective get() = property("package") { it.packageDirective }
     val declarations get() = property("declarations") { it.declarations }
+    val imports get() = property("imports") { it.imports }
 }
 
 @KatDslMarker
