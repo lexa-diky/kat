@@ -34,6 +34,10 @@ abstract class AbstractValidateNode<E : FirDeclaration>(
         return assertion
     }
 
+    private fun remove(assertion: NodeAssertion<*>) {
+        assertions -= assertion
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <T> property(name: String, extractor: (E) -> T): NodeProperty<E, T> =
         propertyCache.computeIfAbsent(name) { NodeProperty(name, extractor) }
@@ -57,6 +61,19 @@ abstract class AbstractValidateNode<E : FirDeclaration>(
             description = "any(${anyAssertionBuffer.joinToString { "${it.property.name} ${it.description}" }})",
             check = { anyAssertionBuffer.any { it.check() } },
             actual = { "any(${anyAssertionBuffer.joinToString { it.actual() }})" }
+        ))
+    }
+
+    infix fun NodeAssertion<*>.or(other: NodeAssertion<*>): NodeAssertion<*> {
+        remove(this)
+        remove(other)
+
+        return emit(DefaultNodeAssertion(
+            element = context.element,
+            property = property("*") { context.element },
+            description = "or(${this.property.name} ${this.description}, ${other.property.name} ${other.description})",
+            check = { this.check() || other.check() },
+            actual = { "or(${this.actual()}, ${other.actual()})" }
         ))
     }
 
